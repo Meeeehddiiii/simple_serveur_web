@@ -3,16 +3,23 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                // Récupérer le code depuis GitHub
                 git branch: 'main', url: 'https://github.com/Meeeehddiiii/simple_serveur_web.git'
             }
         }
-        stage('Run playbook on remote') {
+        stage('Copy playbook from remote machine') {
+            steps {
+                // Copier playbook depuis la machine distante vers Jenkins
+                sh '''
+                    scp azureuser@10.0.0.6:/home/azureuser/playbook.yml /var/lib/jenkins/workspace/Pipeline_serveur_web/
+                '''
+            }
+        }
+        stage('Test') {
             steps {
                 script {
-                    // Exécuter le playbook sur la machine distante
-                    sh '''
-                        ansible-playbook -i <ip_address>, /home/azureuser/playbook.yml
-                    '''
+                    // Exécuter le test du playbook (vérification de syntaxe)
+                    sh 'ansible-playbook --syntax-check playbook.yml'
                 }
             }
         }
