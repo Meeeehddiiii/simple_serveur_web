@@ -12,9 +12,11 @@ pipeline {
         stage('Vérification de la syntaxe') {
             steps {
                 script {
-                    // Vérifier la syntaxe du fichier index.html avec un outil comme `htmlhint`
+                    // Installer npm et htmlhint dans l'environnement
                     sh 'apt-get update && apt-get install -y npm && npm install -g htmlhint'
-                    sh 'htmlhint index.html'
+                    
+                    // Vérifier la syntaxe du fichier index.html, en s'assurant qu'il est bien présent
+                    sh 'cd simple_serveur_web && htmlhint index.html'
                 }
             }
         }
