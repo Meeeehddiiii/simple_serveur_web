@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     stages {
         stage('Checkout') {
             steps {
@@ -8,23 +8,25 @@ pipeline {
                 git 'https://github.com/Meeeehddiiii/simple_serveur_web.git'
             }
         }
-        
-        stage('Copy Playbook from Remote Machine') {
+
+        stage('Vérification de la syntaxe') {
             steps {
                 script {
-                    // Copier playbook.yml depuis ta VM
-                    sh 'scp azureuser@10.0.0.6:/home/azureuser/playbook.yml ./'
+                    // Vérifier la syntaxe du fichier index.html avec un outil comme `htmlhint`
+                    sh 'apt-get update && apt-get install -y npm && npm install -g htmlhint'
+                    sh 'htmlhint index.html'
                 }
             }
         }
-        
-        stage('Test') {
-            steps {
-                script {
-                    // Vérifier la syntaxe du playbook
-                    sh 'ansible-playbook --syntax-check playbook.yml'
-                }
-            }
+    }
+
+    post {
+        success {
+            echo 'La syntaxe de index.html est correcte !'
+        }
+
+        failure {
+            echo 'Erreur de syntaxe dans index.html.'
         }
     }
 }
